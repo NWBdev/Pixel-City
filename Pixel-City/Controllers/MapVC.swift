@@ -59,6 +59,18 @@ class MapVC: UIViewController, UIGestureRecognizerDelegate {
 
 // Set Location service Radius on User location
 extension MapVC: MKMapViewDelegate {
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        
+        if annotation is MKUserLocation {
+            return nil
+        }
+        let pinAnnotation = MKPinAnnotationView(annotation: annotation, reuseIdentifier: "droppablePin")
+        pinAnnotation.pinTintColor = UIColor.orange
+        pinAnnotation.animatesDrop = true
+        
+        return pinAnnotation
+    }
+    
     func centerMapOnUserLocation() {
         guard let cordinate = locationManager.location?.coordinate else {return}
         let cordinateRegion = MKCoordinateRegionMakeWithDistance(cordinate, regionRadius * 2.0, regionRadius * 2.0)

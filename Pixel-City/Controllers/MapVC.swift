@@ -27,6 +27,10 @@ class MapVC: UIViewController, UIGestureRecognizerDelegate {
     var progressLabel: UILabel?
     var ScreenSize = UIScreen.main.bounds
     
+    //Collection View Progamaticlly
+    var flowLayout = UICollectionViewFlowLayout()
+    var collectionView: UICollectionView?
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,6 +41,15 @@ class MapVC: UIViewController, UIGestureRecognizerDelegate {
         self.mapView.showsUserLocation = true
         configureLocationServices()
         addDoubleTap()
+        
+        //collection View
+        collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: flowLayout)
+        collectionView?.register(PhotoCell.self, forCellWithReuseIdentifier: "PhotoCell")
+        collectionView?.delegate = self
+        collectionView?.dataSource = self
+        collectionView?.backgroundColor = #colorLiteral(red: 0.4666666687, green: 0.7647058964, blue: 0.2666666806, alpha: 1) // test
+        
+        pullUpView.addSubview(collectionView!)
     }
 
     
@@ -80,10 +93,31 @@ class MapVC: UIViewController, UIGestureRecognizerDelegate {
         spinner?.activityIndicatorViewStyle = .whiteLarge
         spinner?.color = #colorLiteral(red: 0.4078193307, green: 0.4078193307, blue: 0.4078193307, alpha: 1)
         spinner?.startAnimating()
-        pullUpView.addSubview(spinner!)
+        collectionView?.addSubview(spinner!)
     }
     
+    func removeSpinner() {
+        if spinner != nil {
+            spinner?.removeFromSuperview()
+        }
+    }
     
+    func addProgessLbl() {
+        progressLabel = UILabel()
+        progressLabel?.frame = CGRect(x:(ScreenSize.width / 2) - 120, y: 175, width: 200, height: 40)
+        progressLabel?.font = UIFont(name: "Avenir Next", size: 18)
+        progressLabel?.textColor = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)
+        progressLabel?.textAlignment = .center
+        //progressLabel?.text = "12/40 photos loaded" // test
+        collectionView?.addSubview(progressLabel!)
+        
+    }
+    
+    func removeProgressLbl() {
+        if progressLabel != nil {
+            progressLabel?.removeFromSuperview()
+        }
+    }
     
     @IBAction func centerMapBtnWasPressed(_ sender: Any) {
         if authorizationStatus == .authorizedAlways || authorizationStatus == .authorizedWhenInUse {
@@ -120,14 +154,19 @@ extension MapVC: MKMapViewDelegate {
     }
     
     @objc func dropPin(sender: UITapGestureRecognizer) {
-        //remove pin
+        //remove pin, Progress Label, and spinner
         removePin()
+        removeSpinner()
+        removeProgressLbl()
+        
         //pulls up view for Images
         animateViewUp()
         //Pull down View
         addSwipe()
         // add Spinner
         addSpinner()
+        //progress Label
+        addProgessLbl()
         
         // Drop pin on map
     print("pin was dropepd")
@@ -152,9 +191,6 @@ extension MapVC: MKMapViewDelegate {
     
 }
 
-
-
-
 //LocationService Extn.
 extension MapVC: CLLocationManagerDelegate {
     func configureLocationServices() {
@@ -164,7 +200,33 @@ extension MapVC: CLLocationManagerDelegate {
             return
         }
     }
+    
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         centerMapOnUserLocation()
     }
 }
+
+extension MapVC: UICollectionViewDelegate, UICollectionViewDataSource {
+    
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return 1
+    }
+    
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        // number of Items in array
+        return 4
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PhotoCell", for: indexPath) as? PhotoCell
+        
+        return cell!
+    }
+    
+    
+    
+    
+}
+
+

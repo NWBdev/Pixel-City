@@ -176,7 +176,10 @@ extension MapVC: MKMapViewDelegate {
         let annotation = DroppablePin(coordinate: touchCoordinate, identifier: "droppablePin")
         mapView.addAnnotation(annotation)
         
-        //
+       // print(flickrUrl(forApiKey: apiKey, withAnnotation: annotation, andNumberOfPhotos: 40))
+
+        
+        // region for touch point on Map
         let coordinateRegion = MKCoordinateRegionMakeWithDistance(touchCoordinate, regionRadius * 2.0, regionRadius * 2.0)
         mapView.setRegion(coordinateRegion, animated: true)
         print(touchPoint)
@@ -223,10 +226,6 @@ extension MapVC: UICollectionViewDelegate, UICollectionViewDataSource {
         
         return cell!
     }
-    
-    
-    
-    
 }
 
 

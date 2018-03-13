@@ -14,11 +14,18 @@ class PopVC: UIViewController, UIGestureRecognizerDelegate {
     
     //Variables
     var passedImage: UIImage!
+    var passedlbl: String!
     
+    @IBOutlet weak var descriptionLbl: UILabel!
     
     
     func initData(forImage image: UIImage) {
         self.passedImage = image
+    }
+    
+    func initLbl(label: String){
+        self.passedlbl = label
+        print("testing Init Label: \(self.passedlbl)")
     }
     
     override func viewDidLoad() {
@@ -26,6 +33,7 @@ class PopVC: UIViewController, UIGestureRecognizerDelegate {
 
         // Do any additional setup after loading the view.
         popImageView.image = passedImage
+        descriptionLbl.text = passedlbl
         //dismiss PopView
         addDoubleTap()
         
